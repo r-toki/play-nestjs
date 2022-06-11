@@ -11,9 +11,14 @@ const envFilePath = process.env.NODE_ENV !== 'production' ? '.env.development' :
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({ driver: ApolloDriver }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: 'schema.gql',
+    }),
     FireModule,
     UsersModule,
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
