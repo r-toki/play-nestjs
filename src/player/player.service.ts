@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ItemService } from 'src/item/item.service';
+import { UsersCollection } from 'src/fire/collections/users';
 
 @Injectable()
 export class PlayerService {
-  @Inject(ItemService)
-  private readonly itemService: ItemService;
+  @Inject(UsersCollection)
+  private readonly usersCollection: UsersCollection;
 
-  public findPlayerById(id: string) {
-    const items = this.itemService.getItems();
-    return { id, items, name: `Player ${id}` };
+  public findById(id: string) {
+    return this.usersCollection.findOne(id);
   }
 }
