@@ -11,7 +11,7 @@ export class FireApp {
   db: Firestore;
   storage: Storage;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(configService: ConfigService) {
     const projectId = configService.get<string>('GCLOUD_PROJECT');
     initializeApp({ storageBucket: projectId + '.appspot.com' });
     this.auth = getAuth();
