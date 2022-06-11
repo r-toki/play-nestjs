@@ -4130,11 +4130,6 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nestjs-firebase@^8.2.3:
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/nestjs-firebase/-/nestjs-firebase-8.2.3.tgz#4404c3b07369c7c9066e24c4c9725bec67f9ff8e"
-  integrity sha512-E+VYrPzCpW7K9C/hsDtpP+LonwC9kZONcnymgL0aikjUhuSvzxtzBn38K54WhSmk0WvBsFQx3185yNT+sXkdCw==
-
 node-emoji@1.11.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/node-emoji/-/node-emoji-1.11.0.tgz#69a0150e6946e2f115e9d7ea4df7971e2628301c"
