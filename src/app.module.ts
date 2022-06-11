@@ -14,6 +14,7 @@ const envFilePath = process.env.NODE_ENV !== 'production' ? '.env.development' :
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+      cors: true,
     }),
     FireModule,
     UsersModule,
