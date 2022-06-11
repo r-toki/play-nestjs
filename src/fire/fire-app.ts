@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { initializeApp } from 'firebase-admin/app';
 import { Auth, getAuth } from 'firebase-admin/auth';
 import { Firestore, getFirestore } from 'firebase-admin/firestore';
@@ -10,8 +11,9 @@ export class FireApp {
   db: Firestore;
   storage: Storage;
 
-  constructor() {
-    initializeApp({ storageBucket: 'play-nestjs.appspot.com' });
+  constructor(private readonly configService: ConfigService) {
+    const projectId = configService.get<string>('GCLOUD_PROJECT');
+    initializeApp({ storageBucket: projectId + '.appspot.com' });
     this.auth = getAuth();
     this.db = getFirestore();
     this.storage = getStorage();
