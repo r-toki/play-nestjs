@@ -1,7 +1,7 @@
-import { FireDocument } from 'fire-hose-admin';
+import { AppFireDocument } from '../lib';
 
 export interface UserData {
-  name: string;
+  email: string;
 }
 export interface UserDoc extends UserData {}
-export class UserDoc extends FireDocument<UserData> {}
+export class UserDoc extends AppFireDocument<UserData> {}
