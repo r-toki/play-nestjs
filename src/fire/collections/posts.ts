@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { CollectionReference } from 'firebase-admin/firestore';
 
 import { PostData, PostDoc } from '../documents';
@@ -10,6 +11,7 @@ export class PostsCollection extends AppFireCollection<PostData, PostDoc> {
   }
 }
 
+@Injectable()
 export class PostsCollectionGroup extends AppFireCollectionGroup<PostData, PostDoc> {
   constructor(app: FireApp) {
     super(app.db.collectionGroup('posts'), '__id', (snap) => new PostDoc(snap));
