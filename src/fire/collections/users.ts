@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserData, UserDoc } from '../documents/user';
+import { UserData, UserDoc } from '../documents';
 import { FireApp } from '../fire-app';
 import { AppFireCollection } from '../lib';
 
