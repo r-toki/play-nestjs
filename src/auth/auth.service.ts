@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ForbiddenError } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
-import { UsersCollection } from 'src/fire/collections';
-import { UserDoc } from 'src/fire/documents';
 
-import { AuthDto } from './dto';
+import { UsersCollection } from '../fire/collections';
+import { UserDoc } from '../fire/documents';
+import { SignUpDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,7 @@ export class AuthService {
     return { access_token: at };
   }
 
-  async signUpLocal(dto: AuthDto) {
+  async signUpLocal(dto: SignUpDto) {
     const exists = await this.usersCollection.findOneByEmail(dto.email);
     if (exists) throw new ForbiddenError('Email exists');
 
