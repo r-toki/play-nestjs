@@ -4,11 +4,13 @@ import * as request from 'supertest';
 
 import { SignInDto, SignUpDto } from '../src/auth/dto';
 import { Tokens } from '../src/auth/types';
+import { CreatePostDto } from '../src/posts/dto';
 import { AppModule } from './../src/app.module';
 import { clearFirestore } from './test-helper';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let tokens: Tokens;
 
   beforeAll(async () => {
     await clearFirestore();
@@ -54,7 +56,23 @@ describe('AppController (e2e)', () => {
         .expect(200)
         .expect(({ body }: { body: Tokens }) => {
           expect(body.access_token).toBeTruthy();
+          tokens = body;
         });
+    });
+  });
+
+  describe('Posts', () => {
+    const createPostDto: CreatePostDto = {
+      title: 'Star Wars 1',
+      body: 'This is the best movie',
+    };
+
+    it('should post', () => {
+      return request(app.getHttpServer())
+        .post('/posts')
+        .auth(tokens.access_token, { type: 'bearer' })
+        .send(createPostDto)
+        .expect(201);
     });
   });
 });

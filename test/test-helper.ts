@@ -18,5 +18,5 @@ export const clearFirestore = async () => {
     url: `http://${FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/${PROJECT_ID}/databases/(default)/documents`,
     method: 'DELETE',
   });
-  await sleep(1_000);
+  await sleep(100);
 };
