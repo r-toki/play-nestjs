@@ -4,12 +4,15 @@ import * as request from 'supertest';
 
 import { SignInDto, SignUpDto } from '../src/auth/dto';
 import { Tokens } from '../src/auth/types';
+import { UserData } from '../src/fire/documents';
+import { FireApp } from '../src/fire/fire-app';
 import { CreatePostDto } from '../src/posts/dto';
 import { AppModule } from './../src/app.module';
 import { clearFirestore } from './test-helper';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let fireApp: FireApp;
   let tokens: Tokens;
 
   beforeAll(async () => {
@@ -18,6 +21,7 @@ describe('AppController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
+    fireApp = moduleFixture.get<FireApp>(FireApp);
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -67,12 +71,18 @@ describe('AppController (e2e)', () => {
       body: 'This is the best movie',
     };
 
-    it('should post', () => {
-      return request(app.getHttpServer())
+    it('should post', async () => {
+      await request(app.getHttpServer())
         .post('/posts')
         .auth(tokens.access_token, { type: 'bearer' })
         .send(createPostDto)
         .expect(201);
+
+      const users: ({ id: string } & UserData)[] = await fireApp.db
+        .collection('users')
+        .get()
+        .then(({ docs }) => docs.map((d) => ({ id: d.id, ...(d.data() as UserData) })));
+      console.log(users);
     });
   });
 });

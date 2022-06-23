@@ -1,4 +1,4 @@
-import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 
 import { PostsCollection, UsersCollection } from '../collections';
 import { AppFireDocument } from '../lib';
