@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 import { UsersCollection } from '../fire/collections';
 import { UserDoc } from '../fire/documents';
-import { SignUpDto } from './dto';
+import { SignInDto, SignUpDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +35,16 @@ export class AuthService {
       hashedPassword,
     });
     await user.save();
+
+    return this.getTokens(user.id, user.email);
+  }
+
+  async signInLocal(dto: SignInDto) {
+    const user = await this.usersCollection.findOneByEmail(dto.email);
+    if (!user) throw new ForbiddenError('Access denied');
+
+    const passwordMatches = await bcrypt.compare(dto.password, user.hashedPassword);
+    if (!passwordMatches) throw new ForbiddenError('Access denied');
 
     return this.getTokens(user.id, user.email);
   }
