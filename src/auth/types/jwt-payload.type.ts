@@ -1,4 +1,3 @@
-export type JwtPayload = {
-  email: string;
-  sub: string;
-};
+import { UserDoc } from '../../fire/types';
+
+export type JwtPayload = UserDoc;
