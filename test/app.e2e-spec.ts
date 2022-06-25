@@ -56,7 +56,7 @@ describe('AppController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/auth/local/sign-in')
         .send(singInDto)
-        .expect(200)
+        .expect(201)
         .expect(({ body }: { body: SignInResponse }) => {
           expect(body.tokens.access_token).toBeTruthy();
           tokens = body.tokens;

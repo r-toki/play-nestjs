@@ -38,7 +38,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
 
-    return { tokens, user: user.entity };
+    return { tokens, user: user.publicData };
   }
 
   async signInLocal(dto: SignInRequest): Promise<SignInResponse> {
@@ -50,6 +50,6 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
 
-    return { tokens, user: user.entity };
+    return { tokens, user: user.publicData };
   }
 }
