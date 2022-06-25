@@ -2,10 +2,11 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { SignInRequest, SignInResponse, SignUpRequest, SignUpResponse } from '../src/auth/dto';
+import { SignInRequest, SignUpRequest } from '../src/auth/dto';
 import { Tokens } from '../src/auth/types';
+import { PostDoc } from '../src/fire/documents';
 import { FireApp } from '../src/fire/fire-app';
-import { CreatePostRequest, CreatePostResponse } from '../src/posts/dto';
+import { CreatePostRequest } from '../src/posts/dto';
 import { AppModule } from './../src/app.module';
 import { clearFirestore } from './test-helper';
 
@@ -47,7 +48,7 @@ describe('AppController (e2e)', () => {
         .post('/auth/local/sign-up')
         .send(signUpDto)
         .expect(201)
-        .expect(({ body }: { body: SignUpResponse }) => {
+        .expect(({ body }: { body: { tokens: Tokens } }) => {
           expect(body.tokens.access_token).toBeTruthy();
         });
     });
@@ -57,7 +58,7 @@ describe('AppController (e2e)', () => {
         .post('/auth/local/sign-in')
         .send(singInDto)
         .expect(201)
-        .expect(({ body }: { body: SignInResponse }) => {
+        .expect(({ body }: { body: { tokens: Tokens } }) => {
           expect(body.tokens.access_token).toBeTruthy();
           tokens = body.tokens;
         });
@@ -76,7 +77,7 @@ describe('AppController (e2e)', () => {
         .auth(tokens.access_token, { type: 'bearer' })
         .send(createPostDto)
         .expect(201)
-        .then(({ body }: { body: CreatePostResponse }) => body);
+        .then(({ body }: { body: PostDoc['serialized'] }) => body);
 
       const [postDoc] = await fireApp.db
         .collectionGroup('posts')

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { ForbiddenError } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
 
 import { UsersCollection } from '../fire/collections';
 import { UserDoc } from '../fire/documents';
-import { SignInRequest, SignInResponse, SignUpRequest, SignUpResponse } from './dto';
+import { SignInRequest, SignUpRequest } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -24,9 +23,9 @@ export class AuthService {
     return { access_token: at };
   }
 
-  async signUpLocal(dto: SignUpRequest): Promise<SignUpResponse> {
+  async signUpLocal(dto: SignUpRequest) {
     const exists = await this.usersCollection.findOneByEmail(dto.email);
-    if (exists) throw new ForbiddenError('Email exists');
+    if (exists) throw new Error('Email exists');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const user = UserDoc.create(this.usersCollection, {
@@ -38,18 +37,18 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
 
-    return { tokens, user: user.publicData };
+    return { tokens, user: user.serialized };
   }
 
-  async signInLocal(dto: SignInRequest): Promise<SignInResponse> {
+  async signInLocal(dto: SignInRequest) {
     const user = await this.usersCollection.findOneByEmail(dto.email);
-    if (!user) throw new ForbiddenError('Access denied');
+    if (!user) throw new Error('Access denied');
 
     const passwordMatches = await bcrypt.compare(dto.password, user.hashedPassword);
-    if (!passwordMatches) throw new ForbiddenError('Access denied');
+    if (!passwordMatches) throw new Error('Access denied');
 
     const tokens = await this.getTokens(user.id, user.email);
 
-    return { tokens, user: user.publicData };
+    return { tokens, user: user.serialized };
   }
 }

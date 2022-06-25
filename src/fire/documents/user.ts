@@ -14,9 +14,12 @@ export interface UserDoc extends UserData {}
 export class UserDoc extends AppFireDocument<UserData> {
   postsCollection = new PostsCollection(this.ref.collection('posts'));
 
-  get publicData() {
-    const { hashedPassword, ...rest } = this.entity;
-    return rest;
+  get serialized() {
+    return {
+      ...this.dataWithId,
+      createdAt: this.createdAt.toDate().toISOString(),
+      updatedAt: this.updatedAt.toDate().toISOString(),
+    };
   }
 
   static create(

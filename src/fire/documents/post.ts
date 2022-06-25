@@ -13,6 +13,14 @@ export interface PostData {
 }
 export interface PostDoc extends PostData {}
 export class PostDoc extends AppFireDocument<PostData> {
+  get serialized() {
+    return {
+      ...this.dataWithId,
+      createdAt: this.createdAt.toDate().toISOString(),
+      updatedAt: this.updatedAt.toDate().toISOString(),
+    };
+  }
+
   static create(
     collection: PostsCollection,
     { title, body, userId }: Pick<PostData, 'title' | 'body' | 'userId'>,

@@ -1,7 +1,7 @@
 import { FireCollection, FireCollectionGroup, FireDocument } from 'fire-hose-admin';
 
 export class AppFireDocument<TData> extends FireDocument<TData> {
-  get entity() {
+  get dataWithId() {
     return { id: this.id, ...this.data };
   }
 }
