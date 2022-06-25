@@ -6,7 +6,7 @@ import { SignInRequest, SignUpRequest } from '../src/auth/dto';
 import { Tokens } from '../src/auth/types';
 import { PostDoc } from '../src/fire/documents';
 import { FireApp } from '../src/fire/fire-app';
-import { CreatePostRequest } from '../src/posts/dto';
+import { CreatePostRequest, UpdatePostRequest } from '../src/posts/dto';
 import { AppModule } from './../src/app.module';
 import { clearFirestore } from './test-helper';
 
@@ -66,12 +66,13 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Posts', () => {
-    const createPostDto: CreatePostRequest = {
-      title: 'Star Wars 1',
-      body: 'This is the best movie',
-    };
+    it('should create/update post', async () => {
+      // NOTE: create
+      const createPostDto: CreatePostRequest = {
+        title: 'Star Wars 1',
+        body: 'This is the best movie',
+      };
 
-    it('should post', async () => {
       const { id } = await request(app.getHttpServer())
         .post('/posts')
         .auth(tokens.access_token, { type: 'bearer' })
@@ -79,16 +80,41 @@ describe('AppController (e2e)', () => {
         .expect(201)
         .then(({ body }: { body: PostDoc['serialized'] }) => body);
 
-      const [postDoc] = await fireApp.db
+      const [createdPostDoc] = await fireApp.db
         .collectionGroup('posts')
         .where('__id', '==', id)
         .get()
         .then(({ docs }) => docs);
 
-      expect(postDoc.data()).toEqual(
+      expect(createdPostDoc.data()).toEqual(
         expect.objectContaining({
           title: 'Star Wars 1',
           body: 'This is the best movie',
+        }),
+      );
+
+      // NOTE: update
+      const updatePostDto: UpdatePostRequest = {
+        title: 'Star Wars 2',
+        body: 'This is the worst movie',
+      };
+
+      await request(app.getHttpServer())
+        .put(`/posts/${id}`)
+        .auth(tokens.access_token, { type: 'bearer' })
+        .send(updatePostDto)
+        .expect(200);
+
+      const [updatedPostDoc] = await fireApp.db
+        .collectionGroup('posts')
+        .where('__id', '==', id)
+        .get()
+        .then(({ docs }) => docs);
+
+      expect(updatedPostDoc.data()).toEqual(
+        expect.objectContaining({
+          title: 'Star Wars 2',
+          body: 'This is the worst movie',
         }),
       );
     });

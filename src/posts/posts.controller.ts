@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 
 import { JwtPayload } from '../auth/types';
 import { GetCurrentUser } from '../common/decorators';
-import { CreatePostRequest } from './dto';
+import { CreatePostRequest, UpdatePostRequest } from './dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -21,7 +21,13 @@ export class PostsController {
   }
 
   @Put(':id')
-  async update() {}
+  async update(
+    @GetCurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() dto: UpdatePostRequest,
+  ) {
+    return this.postsService.update(user, id, dto);
+  }
 
   @Delete(':id')
   async delete() {}

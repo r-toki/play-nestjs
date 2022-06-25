@@ -38,4 +38,8 @@ export class PostDoc extends AppFireDocument<PostData> {
       }),
     );
   }
+
+  update({ title, body }: Pick<PostData, 'title' | 'body'>) {
+    return this.edit({ title, body, updatedAt: Timestamp.now() });
+  }
 }
