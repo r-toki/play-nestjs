@@ -1,3 +1,3 @@
-import { UserDoc } from '../../fire/types';
+import { UserDoc } from '../../fire/documents';
 
 export type JwtPayload = UserDoc;

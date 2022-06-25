@@ -1,1 +1,0 @@
-export { UserDoc } from '../documents';
