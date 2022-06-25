@@ -24,4 +24,9 @@ export class PostsService {
 
     return post.serialized;
   }
+
+  async delete(user: JwtPayload, id: string) {
+    const post = await user.postsCollection.findOne(id);
+    await post.delete();
+  }
 }

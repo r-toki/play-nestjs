@@ -66,7 +66,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Posts', () => {
-    it('should create/update post', async () => {
+    it('should create/update/delete post', async () => {
       // NOTE: create
       const createPostDto: CreatePostRequest = {
         title: 'Star Wars 1',
@@ -117,6 +117,20 @@ describe('AppController (e2e)', () => {
           body: 'This is the worst movie',
         }),
       );
+
+      // NOTE: delete
+      await request(app.getHttpServer())
+        .delete(`/posts/${id}`)
+        .auth(tokens.access_token, { type: 'bearer' })
+        .expect(200);
+
+      const [deletedPostDoc] = await fireApp.db
+        .collectionGroup('posts')
+        .where('__id', '==', id)
+        .get()
+        .then(({ docs }) => docs);
+
+      expect(deletedPostDoc).toBeUndefined();
     });
   });
 });

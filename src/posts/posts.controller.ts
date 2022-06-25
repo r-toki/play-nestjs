@@ -30,5 +30,7 @@ export class PostsController {
   }
 
   @Delete(':id')
-  async delete() {}
+  async delete(@GetCurrentUser() user: JwtPayload, @Param('id') id: string) {
+    return this.postsService.delete(user, id);
+  }
 }
