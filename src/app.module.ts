@@ -1,25 +1,15 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
+import { APP_GUARD } from '@nestjs/core';
 
-import { FireModule } from './fire/fire.module';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { AtGuard } from './common/guards/at.guard';
+import { PostsModule } from './posts/posts.module';
 
-const envFilePath = process.env.NODE_ENV !== 'production' ? '.env.development' : undefined;
+const envFilePath = process.env.NODE_ENV !== 'production' ? '.env.development' : '.env';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ envFilePath }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: 'schema.gql',
-      cors: true,
-    }),
-    FireModule,
-    UsersModule,
-  ],
-  controllers: [],
-  providers: [],
+  imports: [ConfigModule.forRoot({ envFilePath, isGlobal: true }), AuthModule, PostsModule],
+  providers: [{ provide: APP_GUARD, useClass: AtGuard }],
 })
 export class AppModule {}
