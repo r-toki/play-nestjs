@@ -16,4 +16,8 @@ export class PostsCollectionGroup extends AppFireCollectionGroup<PostData, PostD
   constructor(app: FireApp) {
     super(app.db.collectionGroup('posts'), '__id', (snap) => new PostDoc(snap));
   }
+
+  findAll() {
+    return this.findManyByQuery((ref) => ref.orderBy('createdAt', 'desc'));
+  }
 }

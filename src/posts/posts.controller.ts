@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 
 import { JwtPayload } from '../auth/types';
-import { GetCurrentUser } from '../common/decorators';
+import { GetCurrentUser, Public } from '../common/decorators';
 import { CreatePostRequest, UpdatePostRequest } from './dto';
 import { PostsService } from './posts.service';
 
@@ -9,11 +9,17 @@ import { PostsService } from './posts.service';
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
+  @Public()
   @Get()
-  async findAll() {}
+  async findAll() {
+    return this.postsService.findAll();
+  }
 
+  @Public()
   @Get(':id')
-  async findOne() {}
+  async findOne(@Param('id') id: string) {
+    return this.postsService.findOne(id);
+  }
 
   @Post()
   async create(@GetCurrentUser() user: JwtPayload, @Body() dto: CreatePostRequest) {

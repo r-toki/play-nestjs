@@ -1,10 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Timestamp } from 'firebase-admin/firestore';
 import * as request from 'supertest';
 
 import { SignInRequest, SignUpRequest } from '../src/auth/dto';
 import { Tokens } from '../src/auth/types';
-import { PostDoc } from '../src/fire/documents';
+import { PostData, PostDoc } from '../src/fire/documents';
 import { FireApp } from '../src/fire/fire-app';
 import { CreatePostRequest, UpdatePostRequest } from '../src/posts/dto';
 import { AppModule } from './../src/app.module';
@@ -66,6 +67,66 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Posts', () => {
+    it('should findAll/findOne post', async () => {
+      const postData1: PostData = {
+        __id: '1',
+        title: 'Star Wars 1',
+        body: 'This is the best movie',
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        userId: '1',
+      };
+      await fireApp.db.collection('users').doc('1').collection('posts').doc('1').set(postData1);
+
+      const postData2: PostData = {
+        __id: '2',
+        title: 'Star Wars 2',
+        body: 'This is the worst movie',
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        userId: '2',
+      };
+      await fireApp.db.collection('users').doc('2').collection('posts').doc('2').set(postData2);
+
+      // NOTE: findAll
+      const findAllBody = await request(app.getHttpServer())
+        .get(`/posts`)
+        .expect(200)
+        .then(({ body }: { body: PostDoc['serialized'][] }) => body);
+
+      expect(findAllBody).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            __id: '1',
+            title: 'Star Wars 1',
+            body: 'This is the best movie',
+            userId: '1',
+          }),
+          expect.objectContaining({
+            __id: '2',
+            title: 'Star Wars 2',
+            body: 'This is the worst movie',
+            userId: '2',
+          }),
+        ]),
+      );
+
+      // NOTE: findOne
+      const findOneBody = await request(app.getHttpServer())
+        .get(`/posts/1`)
+        .expect(200)
+        .then(({ body }: { body: PostDoc['serialized'] }) => body);
+
+      expect(findOneBody).toEqual(
+        expect.objectContaining({
+          __id: '1',
+          title: 'Star Wars 1',
+          body: 'This is the best movie',
+          userId: '1',
+        }),
+      );
+    });
+
     it('should create/update/delete post', async () => {
       // NOTE: create
       const createPostDto: CreatePostRequest = {
